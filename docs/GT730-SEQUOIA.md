@@ -1,7 +1,8 @@
 # GT 730 on Sequoia: investigation notes
 
-Status: research preserved on October 24, 2026. GPU changes, EFI installation,
-and a custom application build are deferred until the owner chooses to proceed.
+Status: added validation coverage for the GT 730 PCI ID and Tahoe patch
+payloads. Full macOS validation and the Sequoia hardware comparison remain
+pending. No driver payload, installed EFI, or running macOS system has changed.
 
 This fork tracks Dortania's development branch. It is not an official OCLP release
 or a certified Hackintosh configuration. All saved work lives on the single `main` branch. Individual commits keep the
@@ -50,27 +51,29 @@ and complete crash logs are intentionally excluded from these notes.
 - RAM pressure did not justify a memory upgrade in the observations. APFS had
   approximately 20 GB free and should have more headroom before OS experiments.
 
-## First GPU mitigation to investigate later
+## Sequoia stability mitigation
 
-OCLP disables `mediaanalysisd` by default on Metal 3802 GPUs, including Kepler,
-because that workload can be unstable. RestrictEvents documents `revblock=media`
-for blocking the service. It affects face analysis in Photos and Live Text.
+OCLP's default generation disables `mediaanalysisd` for detected Metal 3802
+GPUs, including Kepler. The GT 730 fixture now checks that `10de:1287` receives
+that default and that its generated config contains `revblock=media`. The
+existing setting remains user-controllable. Blocking the service disables face
+analysis in Photos and Live Text.
 
-When the owner resumes implementation:
+The repository validator also generates the GT 730 Kepler patchset for Sequoia
+and Tahoe, checks their OS-specific graphics groups and MetallibSupportPkg
+requirements, and includes Darwin 25 in the root-patch payload integrity loop.
+Tahoe validation uses synthetic version inputs; it does not establish a Tahoe
+boot or runtime result on this machine.
 
-1. Read and back up the real EFI and NVRAM settings.
-2. Verify that the intended RestrictEvents version is enabled for this OS.
-3. Prepare a separate EFI copy. Merge `media` into existing `revblock` settings;
-   preserve other selected blocks and the effective defaults. Do not replace
-   unrelated boot arguments, ACPI tables, kexts, SMBIOS, or Windows boot files.
-4. Validate the candidate with an ocvalidate matching its actual OpenCore build.
-5. Test from a separate recovery-capable boot configuration when authorized.
-6. Compare fresh GPU reports across normal work and idle periods. Investigate
-   the text-agent crashes separately rather than assuming the workaround fixes them.
+The remaining stability check is a 24-hour Sequoia comparison using a
+recoverable EFI: keep the workload and idle periods comparable, verify Metal
+acceleration stays active, and compare GPU reset incidents per uptime. If resets
+continue, retain the logs and keep investigating; patch generation alone is not
+evidence that the crashes are fixed. The `nsattributedstringagent` crashes,
+video decoding, and USB mapping remain separate investigations.
 
-No mitigation has been applied. A CLI option to export a modified EFI copy was
-considered but has not been implemented. No new driver, Metal feature level, or
-hardware video-decoding capability is claimed.
+No mitigation has been installed in the running EFI. No new driver, Metal
+feature level, or hardware video-decoding capability is claimed.
 
 ## Validated template correction
 
@@ -89,8 +92,9 @@ Validation with Python 3.11.17 completed with exit code 0:
 - 208 generated configurations accepted by ocvalidate.
 - 50 Darwin version cases checked for root-patch payload integrity.
 
-The validator's current root-patch loop covers Big Sur through Sequoia, not
-Tahoe. Passing it does not certify Tahoe or an actual boot on this Hackintosh.
+The validation results recorded above predate the added Tahoe checks. Even with
+those checks passing, synthetic Darwin 25 inputs do not certify a Tahoe boot or
+an actual boot on this Hackintosh.
 
 ## Recreating the development environment
 

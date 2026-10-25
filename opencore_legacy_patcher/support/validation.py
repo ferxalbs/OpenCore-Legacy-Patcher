@@ -3,12 +3,14 @@ validation.py: Validation class for the patcher
 """
 
 import atexit
+import copy
 import logging
+import plistlib
 import subprocess
 
 from pathlib import Path
 
-from . import network_handler
+from . import defaults, network_handler
 
 from .. import constants
 
@@ -26,6 +28,8 @@ from ..sys_patch.patchsets import (
     PatchType,
     DynamicPatchset
 )
+from ..sys_patch.patchsets.hardware.graphics import nvidia_kepler
+from ..detections import device_probe
 
 
 class PatcherValidation:
@@ -61,6 +65,7 @@ class PatcherValidation:
             example_data.MacPro.MacPro31_Upgrade,
             example_data.MacPro.MacPro31_Modern_AMD,
             example_data.MacPro.MacPro31_Modern_Kepler,
+            example_data.MacPro.MacPro31_Modern_GT730,
             example_data.MacPro.MacPro41_Upgrade,
             example_data.MacPro.MacPro41_Modern_AMD,
             example_data.MacPro.MacPro41_51__Flashed_Modern_AMD,
@@ -73,6 +78,8 @@ class PatcherValidation:
         ]
 
         self._validate_configs()
+        self._validate_gt730_stability_config()
+        self._validate_gt730_kepler_patchsets()
         self._validate_sys_patch()
 
 
@@ -113,6 +120,155 @@ class PatcherValidation:
                 raise Exception(f"Validation failed for predefined model: {self.constants.computer.real_model}")
             else:
                 logging.info(f"Validation succeeded for predefined model: {self.constants.computer.real_model}")
+
+
+    def _validate_gt730_stability_config(self) -> None:
+        """Validate the GT 730 default mitigation and its user override."""
+
+        validation_constants = copy.copy(self.constants)
+        validation_constants.computer = copy.deepcopy(example_data.MacPro.MacPro31_Modern_GT730)
+        validation_constants.custom_model = ""
+
+        defaults.GenerateDefaults(
+            validation_constants.computer.real_model,
+            True,
+            validation_constants,
+            ignore_settings_file=True
+        )
+        if validation_constants.disable_mediaanalysisd is not True:
+            raise Exception("GT 730 defaults did not disable mediaanalysisd")
+
+        self._validate_gt730_generated_config(validation_constants, expect_media_block=True)
+
+        validation_constants.disable_mediaanalysisd = False
+        self._validate_gt730_generated_config(validation_constants, expect_media_block=False)
+
+
+    def _validate_gt730_generated_config(
+        self,
+        validation_constants: constants.Constants,
+        expect_media_block: bool
+    ) -> None:
+        """Build and validate a GT 730 config with or without the media block."""
+
+        build.BuildOpenCore(validation_constants.computer.real_model, validation_constants)
+        config_path = Path(validation_constants.opencore_release_folder) / "EFI" / "OC" / "config.plist"
+
+        result = subprocess.run(
+            [validation_constants.ocvalidate_path, str(config_path)],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT
+        )
+        if result.returncode != 0:
+            subprocess_wrapper.log(result)
+            raise Exception("GT 730 OpenCore configuration failed validation")
+
+        with config_path.open("rb") as config_file:
+            config = plistlib.load(config_file)
+
+        restrict_events = config["NVRAM"]["Add"]["4D1FDA02-38C7-4A6A-9CC6-4BCCA8B30102"]
+        block_args = {
+            argument.strip()
+            for argument in restrict_events.get("revblock", "").split(",")
+            if argument.strip()
+        }
+
+        if ("media" in block_args) != expect_media_block:
+            raise Exception("GT 730 config does not match the mediaanalysisd setting")
+        if "pcie" not in block_args:
+            raise Exception("GT 730 config did not preserve the Mac Pro revblock setting")
+
+
+    def _validate_gt730_kepler_patchsets(self) -> None:
+        """Check GT 730 detection and OS-specific Sequoia/Tahoe patch selection."""
+
+        validation_constants = copy.copy(self.constants)
+        validation_constants.computer = copy.deepcopy(example_data.MacPro.MacPro31_Modern_GT730)
+        gpu = validation_constants.computer.gpus[0]
+
+        if not isinstance(gpu, device_probe.NVIDIA) or gpu.device_id != 0x1287:
+            raise Exception("GT 730 validation fixture does not use PCI device 10de:1287")
+        if gpu.arch != device_probe.NVIDIA.Archs.Kepler:
+            raise Exception("GT 730 PCI device 10de:1287 was not detected as Kepler")
+
+        os_cases = [
+            (24, 6, "24G720", "15.7.7", False),
+            (25, 0, "25G229", "26.0", True),
+        ]
+
+        for xnu_major, xnu_minor, os_build, os_version, is_tahoe in os_cases:
+            validation_constants.detected_os_version = os_version
+            patchset = nvidia_kepler.NvidiaKepler(
+                xnu_major,
+                xnu_minor,
+                os_build,
+                validation_constants
+            )
+
+            if patchset.present() is not True:
+                raise Exception(f"GT 730 was not detected by the Kepler patchset on Darwin {xnu_major}")
+
+            patches = patchset.patches()
+            required_groups = {"Nvidia Kepler", "Metal 3802 Common"}
+            required_groups.add("Metal 3802 .metallibs Tahoe" if is_tahoe else "Metal 3802 .metallibs")
+            if is_tahoe:
+                required_groups.add("Tahoe Graphics")
+            if not required_groups.issubset(patches):
+                missing_groups = ", ".join(sorted(required_groups.difference(patches)))
+                raise Exception(f"GT 730 patchset for Darwin {xnu_major} is missing: {missing_groups}")
+
+            forbidden_groups = (
+                {"Metal 3802 .metallibs"}
+                if is_tahoe
+                else {"Metal 3802 .metallibs Tahoe", "Tahoe Graphics"}
+            )
+            if forbidden_groups.intersection(patches):
+                raise Exception(f"GT 730 patchset for Darwin {xnu_major} contains cross-version graphics patches")
+
+            kepler_overwrite = patches["Nvidia Kepler"][PatchType.OVERWRITE_SYSTEM_VOLUME]
+            extensions = kepler_overwrite["/System/Library/Extensions"]
+            if extensions.get("GeForce.kext") != "12.0 Beta 6-23.4":
+                raise Exception(f"GT 730 patchset for Darwin {xnu_major} selected an unexpected GeForce.kext")
+            if extensions.get("GeForceMTLDriver.bundle") != "11.0 Beta 3-22":
+                raise Exception(f"GT 730 patchset for Darwin {xnu_major} selected an unexpected Metal driver")
+
+            kepler_merge = patches["Nvidia Kepler"][PatchType.MERGE_SYSTEM_VOLUME]
+            system_frameworks = kepler_merge["/System/Library/Frameworks"]
+            private_frameworks = kepler_merge["/System/Library/PrivateFrameworks"]
+            if is_tahoe:
+                sandbox_profiles = kepler_overwrite["/System/Library/Sandbox/Profiles"]
+                if not {"ImageIO.framework", "CMPhoto.framework"}.issubset(
+                    set(system_frameworks).union(private_frameworks)
+                ) or "nsattributedstringagent.sb" not in sandbox_profiles:
+                    raise Exception("Tahoe GT 730 patchset is missing Tahoe-specific compatibility files")
+                common_merge = patches["Metal 3802 Common"][PatchType.MERGE_SYSTEM_VOLUME]
+                common_frameworks = common_merge["/System/Library/Frameworks"]
+                common_private_frameworks = common_merge["/System/Library/PrivateFrameworks"]
+                if common_frameworks.get("Metal.framework") != "13.2.1-25":
+                    raise Exception("Tahoe GT 730 patchset selected an unexpected Metal.framework")
+                if common_private_frameworks.get("MTLCompiler.framework") != "13.6-25":
+                    raise Exception("Tahoe GT 730 patchset selected an unexpected MTLCompiler.framework")
+                if common_private_frameworks.get("GPUCompiler.framework") != "13.2.1-25":
+                    raise Exception("Tahoe GT 730 patchset selected an unexpected GPUCompiler.framework")
+                if patchset.requires_metallib_support_pkg() is not False:
+                    raise Exception("Tahoe GT 730 patchset incorrectly requires MetallibSupportPkg")
+            else:
+                if {"ImageIO.framework", "CMPhoto.framework"}.intersection(
+                    set(system_frameworks).union(private_frameworks)
+                ):
+                    raise Exception("Sequoia GT 730 patchset contains Tahoe-only framework payloads")
+                if "nsattributedstringagent.sb" in kepler_overwrite.get("/System/Library/Sandbox/Profiles", {}):
+                    raise Exception("Sequoia GT 730 patchset contains a Tahoe-only sandbox profile")
+                if "Metal 3802 Common Extended" not in patches:
+                    raise Exception("Sequoia GT 730 patchset is missing the extended Metal 3802 stack")
+                extended_merge = patches["Metal 3802 Common Extended"][PatchType.MERGE_SYSTEM_VOLUME]
+                extended_private_frameworks = extended_merge["/System/Library/PrivateFrameworks"]
+                if extended_private_frameworks.get("MTLCompiler.framework") != "14.2 Beta 1":
+                    raise Exception("Sequoia GT 730 patchset selected an unexpected MTLCompiler.framework")
+                if extended_private_frameworks.get("GPUCompiler.framework") != "14.2 Beta 1":
+                    raise Exception("Sequoia GT 730 patchset selected an unexpected GPUCompiler.framework")
+                if patchset.requires_metallib_support_pkg() is not True:
+                    raise Exception("Sequoia GT 730 patchset must require MetallibSupportPkg")
 
 
     def _validate_root_patch_files(self, major_kernel: int, minor_kernel: int) -> None:
@@ -233,7 +389,14 @@ class PatcherValidation:
 
         atexit.register(self._unmount_dmg)
 
-        for supported_os in [os_data.os_data.big_sur, os_data.os_data.monterey, os_data.os_data.ventura, os_data.os_data.sonoma, os_data.os_data.sequoia]:
+        for supported_os in [
+            os_data.os_data.big_sur,
+            os_data.os_data.monterey,
+            os_data.os_data.ventura,
+            os_data.os_data.sonoma,
+            os_data.os_data.sequoia,
+            os_data.os_data.tahoe,
+        ]:
             for i in range(0, 10):
                 self._validate_root_patch_files(supported_os, i)
 

@@ -2,6 +2,8 @@
 example_data.py: Sample Hardware probes, for use in OpenCore Legacy Patcher validation
 """
 
+import copy
+
 from ..detections import device_probe
 
 
@@ -610,6 +612,19 @@ class MacPro:
         oclp_version=None,
         opencore_version=None,
     )
+
+    MacPro31_Modern_GT730 = copy.deepcopy(MacPro31_Modern_Kepler)
+    MacPro31_Modern_GT730.gpus = [
+        device_probe.NVIDIA(
+            vendor_id=0x10DE,
+            device_id=0x1287,
+            class_code=0x030000,
+            name="GFX0",
+            model="NVIDIA GeForce GT 730 (GK208B)",
+            pci_path="PciRoot(0x0)/Pci(0x5,0x0)/Pci(0x0,0x0)"
+        )
+    ]
+    MacPro31_Modern_GT730.dgpu = MacPro31_Modern_GT730.gpus[0]
 
     MacPro41_Upgrade = device_probe.Computer(
         # Upgraded model with AMD HD7950, Atheros PCIe card
