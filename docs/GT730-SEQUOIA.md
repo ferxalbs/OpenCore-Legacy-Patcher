@@ -34,21 +34,21 @@ and complete crash logs are intentionally excluded from these notes.
 
 ## Evidence and limits
 
-- A minimal Metal blit completed and its 4096-byte output was verified. This shows
+* A minimal Metal blit completed and its 4096-byte output was verified. This shows
   basic acceleration, not prolonged stability or compatibility with every shader.
-- The retained logs contained 120 GPU reset reports dated October 18–24; 117
+* The retained logs contained 120 GPU reset reports dated October 18–24; 117
   identified `mediaanalysisd`, while three did not identify an application.
   Multiple reports can describe the same incident. Errors included graphics
   engine exceptions and MMU faults. These are not proof of physical GPU damage.
-- The most recent retained GPU report preceded the audited session's boot.
+* The most recent retained GPU report preceded the audited session's boot.
   No new GPU report appeared during the audit.
-- `VTIsHardwareDecodeSupported` returned false for H.264, HEVC, VP9, and AV1.
+* `VTIsHardwareDecodeSupported` returned false for H.264, HEVC, VP9, and AV1.
   This describes the capabilities advertised by this installation; individual
   applications and decoder sessions were not benchmarked.
-- There were 47 retained `nsattributedstringagent` crash reports by the end of
+* There were 47 retained `nsattributedstringagent` crash reports by the end of
   the audit. Most inspected reports failed in CoreFoundation dictionary handling.
   Their cause and relationship to GPU resets remain unproven.
-- RAM pressure did not justify a memory upgrade in the observations. APFS had
+* RAM pressure did not justify a memory upgrade in the observations. APFS had
   approximately 20 GB free and should have more headroom before OS experiments.
 
 ## Sequoia stability mitigation
@@ -89,8 +89,8 @@ confirmed that every other value stayed unchanged. No binary was replaced.
 
 Validation with Python 3.11.17 completed with exit code 0:
 
-- 208 generated configurations accepted by ocvalidate.
-- 50 Darwin version cases checked for root-patch payload integrity.
+* 208 generated configurations accepted by ocvalidate.
+* 50 Darwin version cases checked for root-patch payload integrity.
 
 The validation results recorded above predate the added Tahoe checks. Even with
 those checks passing, synthetic Darwin 25 inputs do not certify a Tahoe boot or
@@ -136,32 +136,32 @@ target Tahoe; they do not establish a fix for these Sequoia crashes.
 
 ## Primary references
 
-- [OCLP: FeatureUnlock and mediaanalysisd](https://dortania.github.io/OpenCore-Legacy-Patcher/FAQ.html#what-are-featureunlock-and-mediaanalysisd)
-- [RestrictEvents boot arguments and NVRAM precedence](https://github.com/acidanthera/RestrictEvents#boot-arguments)
-- [OpenCore 1.0.8 release](https://github.com/acidanthera/OpenCorePkg/releases/tag/1.0.8)
-- [OpenCore 1.0.8 sample configuration](https://github.com/acidanthera/OpenCorePkg/blob/1.0.8/Docs/Sample.plist)
-- [OCLP 3.0.0-rc.3](https://github.com/dortania/OpenCore-Legacy-Patcher/releases/tag/3.0.0-rc.3)
-- [Python 3.11.17 source release](https://www.python.org/downloads/release/python-31117/)
-- [PyInstaller macOS architecture support](https://pyinstaller.org/en/stable/feature-notes.html#macos-multi-arch-support)
+* [OCLP: FeatureUnlock and mediaanalysisd](https://dortania.github.io/OpenCore-Legacy-Patcher/FAQ.html#what-are-featureunlock-and-mediaanalysisd)
+* [RestrictEvents boot arguments and NVRAM precedence](https://github.com/acidanthera/RestrictEvents#boot-arguments)
+* [OpenCore 1.0.8 release](https://github.com/acidanthera/OpenCorePkg/releases/tag/1.0.8)
+* [OpenCore 1.0.8 sample configuration](https://github.com/acidanthera/OpenCorePkg/blob/1.0.8/Docs/Sample.plist)
+* [OCLP 3.0.0-rc.3](https://github.com/dortania/OpenCore-Legacy-Patcher/releases/tag/3.0.0-rc.3)
+* [Python 3.11.17 source release](https://www.python.org/downloads/release/python-31117/)
+* [PyInstaller macOS architecture support](https://pyinstaller.org/en/stable/feature-notes.html#macos-multi-arch-support)
 
 ## Follow-up EFI inspection
 
 The installer USB configuration was read in place without editing it:
 
-- `iMac20,1`, RestrictEvents 1.1.7, Lilu 1.7.2, WhateverGreen 1.7.1, and
+* `iMac20,1`, RestrictEvents 1.1.7, Lilu 1.7.2, WhateverGreen 1.7.1, and
   AMFIPass 1.4.1 agree with the running system's observations.
-- RestrictEvents is enabled, but neither boot arguments nor NVRAM Add entries
+* RestrictEvents is enabled, but neither boot arguments nor NVRAM Add entries
   configure `revblock`. Blocking `mediaanalysisd` remains a proposed change.
-- All enabled kext executable/plist paths, ACPI tables, and UEFI drivers checked
+* All enabled kext executable/plist paths, ACPI tables, and UEFI drivers checked
   were present. This checks references, not binary behavior or ACPI correctness.
-- ocvalidate 1.0.8 reported four missing `HideVerbose` keys in the USB's driver
+* ocvalidate 1.0.8 reported four missing `HideVerbose` keys in the USB's driver
   entries. The USB OpenCore binary recognizes `HideVerbose`, but differs from
   the repository binary. Its version string is a placeholder. Do not infer an
   exact firmware release merely from the validator version. No EFI field was
   changed during the inspection.
-- `Vault=Optional`, `SecureBootModel=Disabled`, and `amfi=0x80` with AMFIPass
+* `Vault=Optional`, `SecureBootModel=Disabled`, and `amfi=0x80` with AMFIPass
   loaded were observed. Review the AMFI setup separately before changing it.
-- `USBToolBox.kext` and `UTBDefault.kext` are enabled; no dedicated USB-map kext
+* `USBToolBox.kext` and `UTBDefault.kext` are enabled; no dedicated USB-map kext
   was listed. USBToolBox documents UTBDefault as the pre-mapping attachment
   configuration. A proper port map is a separate follow-up, not an established
   cause of the GPU faults. See the
@@ -240,9 +240,19 @@ decodificación de vídeo y los cierres de `nsattributedstringagent`.
 
 ### Fuentes
 
-- [Apple: novedades de las actualizaciones de Sequoia 15](https://support.apple.com/en-us/120283)
-- [Apple: contenido de seguridad de Sequoia 15.8.1](https://support.apple.com/es-la/149229)
-- [OCLP: modelos compatibles](https://dortania.github.io/OpenCore-Legacy-Patcher/MODELS.html)
-- [OCLP: FeatureUnlock y mediaanalysisd](https://dortania.github.io/OpenCore-Legacy-Patcher/FAQ.html#what-are-featureunlock-and-mediaanalysisd)
-- [OCLP: actualización de OpenCore y parches](https://dortania.github.io/OpenCore-Legacy-Patcher/UPDATE.html)
-- [OCLP: problemas gráficos de Legacy Metal, incluido Kepler](https://github.com/dortania/OpenCore-Legacy-Patcher/issues/1008)
+* [Apple: novedades de las actualizaciones de Sequoia 15](https://support.apple.com/en-us/120283)
+* [Apple: contenido de seguridad de Sequoia 15.8.1](https://support.apple.com/es-la/149229)
+* [OCLP: modelos compatibles](https://dortania.github.io/OpenCore-Legacy-Patcher/MODELS.html)
+* [OCLP: FeatureUnlock y mediaanalysisd](https://dortania.github.io/OpenCore-Legacy-Patcher/FAQ.html#what-are-featureunlock-and-mediaanalysisd)
+* [OCLP: actualización de OpenCore y parches](https://dortania.github.io/OpenCore-Legacy-Patcher/UPDATE.html)
+* [OCLP: problemas gráficos de Legacy Metal, incluido Kepler](https://github.com/dortania/OpenCore-Legacy-Patcher/issues/1008)
+
+## Estado posterior a la instalación de la mitigación
+
+El 25 de octubre de 2026 se instaló y verificó el config candidato en la EFI
+USB, conservando los otros 124 archivos y un respaldo del config original.
+Se mantienen los parches gráficos de OCLP 2.5.1. El reinicio y la validación del
+comportamiento efectivo siguen pendientes; véase
+[KEPLER-OPTIMIZATION-PLAN.md](KEPLER-OPTIMIZATION-PLAN.md). Las observaciones
+anteriores que describen una propuesta sin aplicar corresponden a la auditoría
+inicial, antes de esta instalación.

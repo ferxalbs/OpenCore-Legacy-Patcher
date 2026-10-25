@@ -5,16 +5,16 @@
     "os": "Sequoia 15.7.7",
     "smbios": "iMac20,1"
   },
-  "status": "prepared_not_activated",
+  "status": "installed_pending_reboot",
   "boot_argument_added": "revblock=auto,media",
   "schema_change": "Add HideVerbose=false only where missing in UEFI/Drivers",
   "schema_entries_added": 4,
-  "source_efi_changed": false,
+  "source_efi_changed": true,
   "driver_binaries_changed": false,
   "validation": {
     "tool": "bundled ocvalidate 1.0.8",
     "exit_code": 0,
-    "physical_boot_test": "not performed",
+    "physical_boot_test": "pending reboot after installation on October 25, 2026",
     "opencore_release_identity": "masked version string; not established"
   },
   "limits": [
@@ -22,5 +22,16 @@
     "No new Metal feature level",
     "No hardware video decoding fix",
     "Text-agent crash cause remains unresolved"
-  ]
+  ],
+  "activation": {
+    "date": "2026-10-25",
+    "scope": "Existing installer USB OpenCore configuration only",
+    "other_source_files_unchanged": 124,
+    "original_config_backup_verified": true,
+    "full_efi_backup_verified": true,
+    "efi_left_read_only": true,
+    "root_patches_changed": false,
+    "windows_efi_changed": false,
+    "runtime_boot_arguments_before_reboot": "unchanged"
+  }
 }
