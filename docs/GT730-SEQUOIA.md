@@ -251,8 +251,18 @@ decodificación de vídeo y los cierres de `nsattributedstringagent`.
 
 El 25 de octubre de 2026 se instaló y verificó el config candidato en la EFI
 USB, conservando los otros 124 archivos y un respaldo del config original.
-Se mantienen los parches gráficos de OCLP 2.5.1. El reinicio y la validación del
-comportamiento efectivo siguen pendientes; véase
+Se mantienen los parches gráficos de OCLP 2.5.1. El reinicio del mismo día confirmó el argumento efectivo y RestrictEvents
+cargado, sin informes GPU nuevos durante la comprobación inicial; véase
 [KEPLER-OPTIMIZATION-PLAN.md](KEPLER-OPTIMIZATION-PLAN.md). Las observaciones
 anteriores que describen una propuesta sin aplicar corresponden a la auditoría
 inicial, antes de esta instalación.
+
+## Comprobación después del reinicio
+
+El 25 de octubre a las 16:09 (America/Lima), el sistema arrancado mostró
+`revblock=auto,media` y RestrictEvents 1.1.7 cargado. No se observó ningún
+proceso `mediaanalysisd` ni informes `.gpuRestart` nuevos desde ese arranque.
+La GT 730 completó la operación Metal con datos verificados; conserva Metal
+Mac1 y no anuncia Mac2 ni decodificación de vídeo por hardware en la prueba.
+Esto confirma la activación y una operación gráfica básica, pero la estabilidad
+durante uso prolongado y reposo sigue pendiente de observación.

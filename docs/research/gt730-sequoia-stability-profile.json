@@ -5,7 +5,7 @@
     "os": "Sequoia 15.7.7",
     "smbios": "iMac20,1"
   },
-  "status": "installed_pending_reboot",
+  "status": "active_initial_boot_verified",
   "boot_argument_added": "revblock=auto,media",
   "schema_change": "Add HideVerbose=false only where missing in UEFI/Drivers",
   "schema_entries_added": 4,
@@ -14,7 +14,7 @@
   "validation": {
     "tool": "bundled ocvalidate 1.0.8",
     "exit_code": 0,
-    "physical_boot_test": "pending reboot after installation on October 25, 2026",
+    "physical_boot_test": "passed initial runtime checks on October 25, 2026; long-term stability pending",
     "opencore_release_identity": "masked version string; not established"
   },
   "limits": [
@@ -33,5 +33,15 @@
     "root_patches_changed": false,
     "windows_efi_changed": false,
     "runtime_boot_arguments_before_reboot": "unchanged"
+  },
+  "runtime_verification": {
+    "checked_at": "2026-10-25T16:09:02.736925-05:00",
+    "media_block_argument_effective": true,
+    "restrict_events_loaded": true,
+    "boot_after_efi_install": true,
+    "gpu_reports_this_boot": [],
+    "mediaanalysisd_processes_observed": [],
+    "metal_probe_returncode": 0,
+    "metal_probe_output": "GPU: NVIDIA GeForce GT 730\nlowPower=false removable=false\nrecommendedWorkingSetMiB=2048\nmac1=true mac2=false\nMetal blit status=4 dataVerified=true\nVideoToolbox hardware decode H264: false\nVideoToolbox hardware decode HEVC: false\nVideoToolbox hardware decode VP9: false\nVideoToolbox hardware decode AV1: false\n"
   }
 }

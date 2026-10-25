@@ -84,8 +84,8 @@ Cuando se active una copia candidata con recuperación disponible, comparar:
 El fallo de nsattributedstringagent, la decodificación de vídeo y el mapa USB
 mantienen investigaciones separadas. Migrar a Tahoe sería otra prueba con
 sus propios parches; la captura no establece que vaya a rendir mejor que
-Sequoia en nuestro hardware. El config candidato está instalado en la EFI USB; su efecto sigue pendiente
-del próximo arranque de macOS y de las comprobaciones posteriores.
+Sequoia en nuestro hardware. El config candidato está instalado en la EFI USB y su argumento se confirmó
+en el arranque posterior. La estabilidad prolongada sigue pendiente.
 
 ## Instalación y comprobación del 25 de octubre de 2026
 
@@ -111,3 +111,15 @@ inactividad. Los metadatos de root patch continuaban indicando OCLP 2.5.1 /
 PatcherSupportPkg 1.9.7. Esta instalación no sustituyó esos recursos ni modificó
 la EFI interna de Microsoft, ACPI, kexts o SMBIOS. Los originales y las rutas
 específicas de recuperación permanecen en el respaldo privado del propietario.
+
+## Verificación del arranque posterior
+
+El 25 de octubre de 2026 a las 16:09 (America/Lima) se confirmó un arranque
+posterior a la instalación, con `revblock=auto,media` efectivo y RestrictEvents
+1.1.7 cargado. No se observó `mediaanalysisd` en ejecución ni informes GPU
+nuevos desde ese arranque. La prueba Metal terminó con datos verificados
+(`dataVerified=true`); Mac1 sigue disponible, Mac2 y las pruebas de
+decodificación por hardware siguen sin soporte anunciado. Estas comprobaciones
+confirman la activación, sin demostrar todavía una reducción sostenida de
+incidentes GPU. El informe de ejecución completo se conserva en el registro
+privado `post-boot-check.json` de la auditoría del 25 de octubre.
