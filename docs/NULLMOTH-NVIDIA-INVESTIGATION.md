@@ -10,6 +10,10 @@ Versión examinada: `v2.5.4`, commit
 Kepler restaurados por OCLP. Los parámetros específicos de sus kexts tampoco
 constituyen optimizaciones demostradas para nuestra instalación actual.
 
+Kepler sí tiene una ruta distinta mediante OCLP, incluidos parches específicos
+para Tahoe. La comparación y la optimización propuesta para nuestra GT 730
+están en [KEPLER-OPTIMIZATION-PLAN.md](KEPLER-OPTIMIZATION-PLAN.md).
+
 ## Método y alcance
 
 Se aplicó el flujo de la habilidad `reverse-engineer-anything`: identificar el

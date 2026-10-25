@@ -178,3 +178,12 @@ Se revisó NullMoth NVIDIA Driver v2.5.4, commit
 Turing o posterior y excluye nuestra GT 730 Kepler. La investigación, sus fuentes
 y límites están en [NULLMOTH-NVIDIA-INVESTIGATION.md](NULLMOTH-NVIDIA-INVESTIGATION.md).
 No se instalaron componentes ni se trasladaron sus parámetros al arranque.
+
+## Ruta Kepler de OCLP y candidato de estabilidad
+
+Kepler dispone de parches OCLP tanto en Sequoia como en la rama de Tahoe. La
+exclusión encontrada en NullMoth corresponde a su implementación GSP, no a
+OCLP. La comparación por sistema y la primera receta candidata se conservan en
+[KEPLER-OPTIMIZATION-PLAN.md](KEPLER-OPTIMIZATION-PLAN.md). Se preparó una copia
+privada de EFI con `revblock=auto,media` y cuatro claves HideVerbose faltantes;
+ocvalidate 1.0.8 la aprobó. No se instaló ni arrancó esa copia.

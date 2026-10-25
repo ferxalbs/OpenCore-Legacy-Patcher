@@ -1,0 +1,26 @@
+{
+  "target": {
+    "gpu_pci": "10de:1287",
+    "architecture": "Kepler GK208B",
+    "os": "Sequoia 15.7.7",
+    "smbios": "iMac20,1"
+  },
+  "status": "prepared_not_activated",
+  "boot_argument_added": "revblock=auto,media",
+  "schema_change": "Add HideVerbose=false only where missing in UEFI/Drivers",
+  "schema_entries_added": 4,
+  "source_efi_changed": false,
+  "driver_binaries_changed": false,
+  "validation": {
+    "tool": "bundled ocvalidate 1.0.8",
+    "exit_code": 0,
+    "physical_boot_test": "not performed",
+    "opencore_release_identity": "masked version string; not established"
+  },
+  "limits": [
+    "No claimed FPS improvement",
+    "No new Metal feature level",
+    "No hardware video decoding fix",
+    "Text-agent crash cause remains unresolved"
+  ]
+}
