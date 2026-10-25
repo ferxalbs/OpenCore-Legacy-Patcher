@@ -1,0 +1,21 @@
+{
+  "commit": "46779055f68208baa5ddfb9b2e9c77ed028e1d59",
+  "release": "v2.5.4",
+  "gpu_vendor": "10de",
+  "gpu_device": "1287",
+  "architecture": "Kepler GK208B",
+  "supported_id_count": 247,
+  "explicit_table_accepts_gt730": false,
+  "fallback_id_floor": "1E00",
+  "numeric_fallback_accepts_gt730": false,
+  "installer_executed": false,
+  "driver_loaded": false,
+  "method": "Read and parse source; no installer execution and no hardware spoofing.",
+  "reviewed_on": "2026-10-24",
+  "repository": "https://github.com/nullmoth/nvidia-macos-driver",
+  "source_evidence": {
+    "support_document": "docs/CARD-SUPPORT.md:3-19",
+    "installer_gate": "package/install.sh:145-167",
+    "kernel_probe": "kexts/NVRM/NVRM.cpp:384-402"
+  }
+}

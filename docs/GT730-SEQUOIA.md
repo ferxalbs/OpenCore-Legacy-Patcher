@@ -166,3 +166,15 @@ The installer USB configuration was read in place without editing it:
 A private EFI backup was kept locally outside the repository. Its configuration
 contains device identifiers and is not uploaded to this public fork. No runtime
 GPU mitigation, EFI installation, or root patching was performed.
+
+## Investigación posterior: NullMoth NVIDIA
+
+El propietario indicó que no utiliza las funciones de Fotos y Live Text
+afectadas por `mediaanalysisd`. Esa preferencia queda registrada para la prueba
+de mitigación; todavía no se modificó la EFI.
+
+Se revisó NullMoth NVIDIA Driver v2.5.4, commit
+`46779055f68208baa5ddfb9b2e9c77ed028e1d59`. Su implementación GSP requiere
+Turing o posterior y excluye nuestra GT 730 Kepler. La investigación, sus fuentes
+y límites están en [NULLMOTH-NVIDIA-INVESTIGATION.md](NULLMOTH-NVIDIA-INVESTIGATION.md).
+No se instalaron componentes ni se trasladaron sus parámetros al arranque.
