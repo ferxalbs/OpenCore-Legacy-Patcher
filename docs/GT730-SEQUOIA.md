@@ -22,8 +22,11 @@ template correction identifiable if an upstream contribution is considered later
 The internal SSD EFI (`disk0s1`) was mounted read-only during the follow-up.
 It contains `EFI/Boot` and `EFI/Microsoft`, with no `EFI/OC` or OpenCore config.
 The fallback `bootx64.efi` is byte-for-byte identical to Microsoft
-`bootmgfw.efi`. The OpenCore configuration still needs to be located; the
-installer USB also has an EFI partition (`disk2s1`). These BSD disk identifiers
+`bootmgfw.efi`. OpenCore was found on the installer USB EFI (`disk2s1`), at
+`/Volumes/EFI/EFI/OC/config.plist`, and inspected read-only. Its SMBIOS, boot
+arguments, and loaded kext versions match the running system, pointing to this
+USB as the bootloader source. Firmware BootCurrent evidence was not available,
+so that origin is not asserted solely from NVRAM. These BSD disk identifiers
 can change after a reboot. Do not generate a replacement Hackintosh EFI from
 the reported iMac model alone. Serial numbers, UUIDs, personal EFI files,
 and complete crash logs are intentionally excluded from these notes.
@@ -136,3 +139,30 @@ target Tahoe; they do not establish a fix for these Sequoia crashes.
 - [OCLP 3.0.0-rc.3](https://github.com/dortania/OpenCore-Legacy-Patcher/releases/tag/3.0.0-rc.3)
 - [Python 3.11.17 source release](https://www.python.org/downloads/release/python-31117/)
 - [PyInstaller macOS architecture support](https://pyinstaller.org/en/stable/feature-notes.html#macos-multi-arch-support)
+
+## Follow-up EFI inspection
+
+The installer USB configuration was read in place without editing it:
+
+- `iMac20,1`, RestrictEvents 1.1.7, Lilu 1.7.2, WhateverGreen 1.7.1, and
+  AMFIPass 1.4.1 agree with the running system's observations.
+- RestrictEvents is enabled, but neither boot arguments nor NVRAM Add entries
+  configure `revblock`. Blocking `mediaanalysisd` remains a proposed change.
+- All enabled kext executable/plist paths, ACPI tables, and UEFI drivers checked
+  were present. This checks references, not binary behavior or ACPI correctness.
+- ocvalidate 1.0.8 reported four missing `HideVerbose` keys in the USB's driver
+  entries. The USB OpenCore binary recognizes `HideVerbose`, but differs from
+  the repository binary. Its version string is a placeholder. Do not infer an
+  exact firmware release merely from the validator version. No EFI field was
+  changed during the inspection.
+- `Vault=Optional`, `SecureBootModel=Disabled`, and `amfi=0x80` with AMFIPass
+  loaded were observed. Review the AMFI setup separately before changing it.
+- `USBToolBox.kext` and `UTBDefault.kext` are enabled; no dedicated USB-map kext
+  was listed. USBToolBox documents UTBDefault as the pre-mapping attachment
+  configuration. A proper port map is a separate follow-up, not an established
+  cause of the GPU faults. See the
+  [USBToolBox workflow](https://github.com/USBToolBox/kext#usage).
+
+A private EFI backup was kept locally outside the repository. Its configuration
+contains device identifiers and is not uploaded to this public fork. No runtime
+GPU mitigation, EFI installation, or root patching was performed.
