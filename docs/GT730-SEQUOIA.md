@@ -191,3 +191,58 @@ OCLP. La comparación por sistema y la primera receta candidata se conservan en
 [KEPLER-OPTIMIZATION-PLAN.md](KEPLER-OPTIMIZATION-PLAN.md). Se preparó una copia
 privada de EFI con `revblock=auto,media` y cuatro claves HideVerbose faltantes;
 ocvalidate 1.0.8 la aprobó. No se instaló ni arrancó esa copia.
+
+## Revisión web del soporte Sequoia (2026-10-25)
+
+Apple muestra macOS Sequoia 15.8.1 como la actualización más reciente de la
+rama 15.x. Su aviso de seguridad indica que se publicó el 28 de septiembre de
+2026 e incluye una corrección de CoreGraphics. Esto justifica evaluar una
+actualización por seguridad; no demuestra que 15.8.1 corrija los reinicios de
+la GT 730 ni que esta EFI concreta ya haya sido probada con esa versión.
+
+La guía de modelos de OCLP está dirigida a Macs Intel enumerados por el
+proyecto. El equipo descrito aquí usa un PC i5-10400F con SMBIOS de Mac, por lo
+que sus resultados son experimentales y no tienen garantía ni soporte upstream
+para ese hardware. La rama de este repositorio también contiene desarrollo para
+Tahoe; no debe tratarse como una versión certificada para instalar en el equipo.
+
+La mitigación de `mediaanalysisd` ya existe en el código: [defaults.py](../opencore_legacy_patcher/support/defaults.py)
+la activa al detectar GPUs Ivy Bridge, Haswell o Kepler; [misc.py](../opencore_legacy_patcher/efi_builder/misc.py)
+la traduce a `revblock=media`; y la configuración permite desactivarla. OCLP
+documenta que deshabilitar ese servicio es su opción predeterminada para GPUs
+Metal 3802 por estabilidad, a costa de Face Detection en Fotos y Live Text. La
+validación del repo comprueba el valor predeterminado y su override, pero no
+puede confirmar estabilidad en ejecución. Por eso el bloqueo es un candidato
+medible, no una solución demostrada a los resets de GPU.
+
+La EFI USB inspeccionada en este seguimiento no llevaba `revblock=media`. El
+perfil candidato que sí lo incluye permanece sin instalar ni arrancar; por
+tanto, la mitigación todavía no está activa en el sistema observado.
+
+Antes de una prueba de actualización, conserva una EFI conocida que arranque y
+una copia de seguridad recuperable. Desactiva la descarga automática de
+actualizaciones y revisa primero la compatibilidad del código y sus payloads
+con la versión exacta. Las guías de OCLP recomiendan actualizar la aplicación y
+OpenCore antes de una actualización menor y volver a instalar los parches de
+volumen al terminar; algunos sistemas Sequoia requieren red para descargar
+MetallibSupportPkg al reaplicar los parches. La documentación de Legacy Metal
+también registra que Software Update puede quedarse girando en NVIDIA Kepler y
+remite a actualizar desde línea de comandos. Esas instrucciones describen OCLP
+en Macs compatibles; en este Hackintosh no garantizan un procedimiento seguro.
+
+La validación local de Kepler compara Sequoia 15.7.7 con Tahoe sintético. No
+incluye todavía una prueba de selección de parches para Sequoia 15.8.1 y ninguna
+validación del repositorio equivale a arrancar o probar la GPU. Para el sistema
+real, compara periodos equivalentes con la EFI candidata: incidentes GPU por
+tiempo de actividad, carga de trabajo, reposo, continuidad de WindowServer y
+una prueba Metal con salida verificada. Mantén separadas las pruebas de
+decodificación de vídeo y los cierres de `nsattributedstringagent`.
+
+### Fuentes
+
+- [Apple: novedades de las actualizaciones de Sequoia 15](https://support.apple.com/en-us/120283)
+- [Apple: contenido de seguridad de Sequoia 15.8.1](https://support.apple.com/es-la/149229)
+- [OCLP: modelos compatibles](https://dortania.github.io/OpenCore-Legacy-Patcher/MODELS.html)
+- [OCLP: FeatureUnlock y mediaanalysisd](https://dortania.github.io/OpenCore-Legacy-Patcher/FAQ.html#what-are-featureunlock-and-mediaanalysisd)
+- [OCLP: actualización de OpenCore y parches](https://dortania.github.io/OpenCore-Legacy-Patcher/UPDATE.html)
+- [OCLP: problemas gráficos de Legacy Metal, incluido Kepler](https://github.com/dortania/OpenCore-Legacy-Patcher/issues/1008)

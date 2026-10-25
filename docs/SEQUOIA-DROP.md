@@ -1,5 +1,12 @@
 # macOS Sequoia
 
+> **Status note:** This page records the initial support state introduced with
+> OCLP 2.0.0. It is historical guidance, not a current compatibility guarantee.
+> For update procedures and known issues, see [Updating](UPDATE.md),
+> [Troubleshooting](TROUBLESHOOT-HARDWARE.md), and the
+> [supported model matrix](MODELS.md). For the GT 730 Sequoia investigation in
+> this fork, see [GT730-SEQUOIA.md](GT730-SEQUOIA.md).
+
 ![](./images/macos-sequoia.png)
 
 Another year, another release.
