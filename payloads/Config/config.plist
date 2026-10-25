@@ -3023,6 +3023,8 @@
 				<false/>
 				<key>Arguments</key>
 				<string></string>
+				<key>HideVerbose</key>
+				<false/>
 				<key>LoadEarly</key>
 				<false/>
 			</dict>
@@ -3035,6 +3037,8 @@
 				<false/>
 				<key>Arguments</key>
 				<string></string>
+				<key>HideVerbose</key>
+				<false/>
 				<key>LoadEarly</key>
 				<false/>
 			</dict>
@@ -3047,6 +3051,8 @@
 				<false/>
 				<key>Arguments</key>
 				<string></string>
+				<key>HideVerbose</key>
+				<false/>
 				<key>LoadEarly</key>
 				<false/>
 			</dict>
@@ -3059,6 +3065,8 @@
 				<false/>
 				<key>Arguments</key>
 				<string></string>
+				<key>HideVerbose</key>
+				<false/>
 				<key>LoadEarly</key>
 				<false/>
 			</dict>
@@ -3071,6 +3079,8 @@
 				<false/>
 				<key>Arguments</key>
 				<string></string>
+				<key>HideVerbose</key>
+				<false/>
 				<key>LoadEarly</key>
 				<false/>
 			</dict>
@@ -3083,6 +3093,8 @@
 				<false/>
 				<key>Arguments</key>
 				<string></string>
+				<key>HideVerbose</key>
+				<false/>
 				<key>LoadEarly</key>
 				<false/>
 			</dict>
@@ -3095,6 +3107,8 @@
 				<false/>
 				<key>Arguments</key>
 				<string></string>
+				<key>HideVerbose</key>
+				<false/>
 				<key>LoadEarly</key>
 				<false/>
 			</dict>
@@ -3107,6 +3121,8 @@
 				<false/>
 				<key>Arguments</key>
 				<string></string>
+				<key>HideVerbose</key>
+				<false/>
 				<key>LoadEarly</key>
 				<false/>
 			</dict>
@@ -3119,6 +3135,8 @@
 				<false/>
 				<key>Arguments</key>
 				<string></string>
+				<key>HideVerbose</key>
+				<false/>
 				<key>LoadEarly</key>
 				<false/>
 			</dict>
@@ -3131,6 +3149,8 @@
 				<false/>
 				<key>Arguments</key>
 				<string></string>
+				<key>HideVerbose</key>
+				<false/>
 				<key>LoadEarly</key>
 				<false/>
 			</dict>
@@ -3143,6 +3163,8 @@
 				<false/>
 				<key>Arguments</key>
 				<string></string>
+				<key>HideVerbose</key>
+				<false/>
 				<key>LoadEarly</key>
 				<false/>
 			</dict>
@@ -3155,6 +3177,8 @@
 				<false/>
 				<key>Arguments</key>
 				<string></string>
+				<key>HideVerbose</key>
+				<false/>
 				<key>LoadEarly</key>
 				<false/>
 			</dict>
@@ -3167,6 +3191,8 @@
 				<false/>
 				<key>Arguments</key>
 				<string></string>
+				<key>HideVerbose</key>
+				<false/>
 				<key>LoadEarly</key>
 				<false/>
 			</dict>
