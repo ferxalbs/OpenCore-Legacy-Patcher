@@ -4,8 +4,8 @@ Status: research preserved on October 24, 2026. GPU changes, EFI installation,
 and a custom application build are deferred until the owner chooses to proceed.
 
 This fork tracks Dortania's development branch. It is not an official OCLP release
-or a certified Hackintosh configuration. Keep upstream contribution candidates
-separate from device-specific experiments.
+or a certified Hackintosh configuration. All saved work lives on the single `main` branch. Individual commits keep the
+template correction identifiable if an upstream contribution is considered later.
 
 ## Target hardware
 
@@ -19,8 +19,13 @@ separate from device-specific experiments.
 | Installed root patches | OCLP 2.5.1 / PatcherSupportPkg 1.9.7 |
 | Loaded support kexts | Lilu 1.7.2, WhateverGreen 1.7.1, RestrictEvents 1.1.7 |
 
-The actual EFI has not been inspected. Do not generate a replacement Hackintosh
-EFI from the reported iMac model alone. Serial numbers, UUIDs, personal EFI files,
+The internal SSD EFI (`disk0s1`) was mounted read-only during the follow-up.
+It contains `EFI/Boot` and `EFI/Microsoft`, with no `EFI/OC` or OpenCore config.
+The fallback `bootx64.efi` is byte-for-byte identical to Microsoft
+`bootmgfw.efi`. The OpenCore configuration still needs to be located; the
+installer USB also has an EFI partition (`disk2s1`). These BSD disk identifiers
+can change after a reboot. Do not generate a replacement Hackintosh EFI from
+the reported iMac model alone. Serial numbers, UUIDs, personal EFI files,
 and complete crash logs are intentionally excluded from these notes.
 
 ## Evidence and limits
