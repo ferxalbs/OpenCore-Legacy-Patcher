@@ -125,3 +125,17 @@ the three new kext bundles and Tahoe's HAL bundle. The effective Sequoia config
 was unchanged and its Metal blit still passed. USB EFI was left read-only.
 Tahoe Wi-Fi association, audio output and runtime stability remain pending
 the next normal Tahoe boot; successful staging does not certify those results.
+
+## Owner runtime report, October 26, 2026
+
+After booting the candidate, the owner reported fully working native Wi-Fi,
+approximately two hours of working audio, and responsive operation without
+noticeable delays. This is a successful owner-observed runtime check, not an
+instrumented throughput benchmark, a complete codec/port test or proof of
+long-term stability. No further Wi-Fi/audio configuration changes were made
+in response to this report.
+
+The owner also noted XProtect remaining active. The agent's connected tools
+were back on Sequoia 15.7.7 at inspection time; its sampled XProtect processes
+were at 0.0% CPU. That does not measure XProtect's resource usage in Tahoe and
+is not evidence that Tahoe's protections need modification.
