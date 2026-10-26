@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-25",
+  "status": "efi_staged_native_installassistant_application_pending",
+  "target": {
+    "version": "26.7.1",
+    "build": "25G241",
+    "darwin": "25.6",
+    "gpu": "NVIDIA Kepler GK208B 10de:1287",
+    "physical_wifi": "Intel 8086:43f0",
+    "spoofed_wifi_IOName_removed": "pci14e4,43a0",
+    "audio_codec": "Realtek ALC897 10ec:0897",
+    "smbios": "iMac20,1"
+  },
+  "installer": {
+    "source": "Apple HTTPS CDN; catalog availability independently confirmed by softwareupdate",
+    "size": 18380974544,
+    "sha1": "3ddcf86a385791c0dc7aca7c3f3f4adb2ca25f73",
+    "sha256": "ca854f49dfdedbe78492c26d0e4172ee4d37573e2d375ca90c083d7615b6f48a",
+    "apple_package_signature_valid": true,
+    "manual_app_extraction_gatekeeper_accepted": false,
+    "native_apple_package_installation": "pending user-local administrator authentication",
+    "os_installation_started": false
+  },
+  "checks": {
+    "repository_validation_exit_code": 0,
+    "darwin_payload_cases": 60,
+    "kepler_resource_paths_present": 25,
+    "patcher_support_versions_checked": ["2.0.2", "2.0.3"],
+    "candidate_ocvalidate_exit_code": 0,
+    "original_efi_files_unchanged_except_config": 124,
+    "corrected_candidate_files_verified": 134,
+    "existing_itlwm_matches_official_release": "2 of 2 files identical",
+    "new_efi_boot_test": "pending"
+  },
+  "prepared": {
+    "empty_apfs_volume": "Tahoe-Pruebas",
+    "efi_location": "Existing external OpenCore USB only",
+    "efi_left_read_only": true,
+    "offline_tools": "Official OCLP 3.0.0-rc.3 package and HeliPort 1.5.0 on MATE",
+    "heliport_signed": false,
+    "exact_kdk": "25G241; checksum and Apple package signature verified; not installed",
+    "user_confirmed_external_documents_backup": true,
+    "windows_partitions_changed": false,
+    "windows_efi_changed": false,
+    "sequoia_root_patches_changed": false
+  },
+  "pending": [
+    "Complete standard Apple InstallAssistant package installation and inspect internal build metadata",
+    "Reboot Sequoia through the corrected USB and verify graphics and wireless",
+    "Install Tahoe only on the new volume, then validate runtime patch selection",
+    "Resolve audio patch selection for the Hackintosh with a T2-model SMBIOS",
+    "Check USB, sleep, applications and GPU stability during real use"
+  ]
+}

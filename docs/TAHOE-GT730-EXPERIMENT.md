@@ -5,6 +5,11 @@ GK208B (`10de:1287`), Wi-Fi Intel (`8086:43f0`) y SMBIOS iMac20,1. No es una
 certificación de compatibilidad con Hackintosh ni una actualización del Sequoia
 de trabajo. Windows y Sequoia se conservan.
 
+Estado de esta preparación: volumen vacío creado, EFI Intel corregida instalada
+y verificada, paquetes descargados y comprobados. El arranque con la nueva EFI
+y la instalación de Tahoe siguen pendientes. Sequoia conserva OCLP 2.5.1 y sus
+root patches anteriores.
+
 ## Sistema elegido y recursos
 
 El catálogo de Software Update de Apple consultado el 25 de octubre de 2026
@@ -51,6 +56,15 @@ Tahoe debe ser nueva, sin migración completa de aplicaciones ni documentos.
 El instalador completo descargado pasó su SHA-1 de referencia y la firma de
 Apple; su SHA-256 local es
 `ca854f49dfdedbe78492c26d0e4172ee4d37573e2d375ca90c083d7615b6f48a`.
+
+La extracción manual de InstallAssistant no se considera una aplicación lista:
+Gatekeeper la rechazó por `resource envelope is obsolete (custom omit rules)`.
+La firma del código con requisito de anclaje Apple sí pasó al omitir únicamente
+la evaluación de recursos, pero ese resultado no equivale a aceptar la app en
+Gatekeeper. No se retiraron firmas ni se modificaron controles de seguridad.
+Se preparó la instalación estándar del paquete firmado de Apple; requiere
+autenticación local y solo añade la aplicación instaladora. Su resultado y los
+metadatos internos deben comprobarse antes de iniciar la instalación del sistema.
 
 Las EFI, manifiestos de hashes y comandos de recuperación con identificadores
 del dispositivo se conservan en la auditoría privada, fuera de GitHub. La
