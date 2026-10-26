@@ -116,3 +116,12 @@ restore wrapper preserves the already working graphics recovery. Do not use the
 graphics snapshot rollback merely because Wi-Fi or audio failed. A read-only
 diagnostic command on MATE reports loaded drivers, SimpleHDA's runtime state,
 interfaces and CoreAudio devices inside Tahoe.
+
+## Staging result
+
+The corrected transaction completed on October 25, 2026 at 22:18 (America/Lima).
+An independent readback verified the active USB config, its original backup,
+the three new kext bundles and Tahoe's HAL bundle. The effective Sequoia config
+was unchanged and its Metal blit still passed. USB EFI was left read-only.
+Tahoe Wi-Fi association, audio output and runtime stability remain pending
+the next normal Tahoe boot; successful staging does not certify those results.
