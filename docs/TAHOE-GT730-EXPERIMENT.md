@@ -196,5 +196,9 @@ La construcción aislada de la caché auxiliar de Tahoe fue exitosa, con enlaces
 verificados a sus BootKC y SystemKC y sin cambios en las cachés instaladas.
 La validación completa del repositorio terminó con código 0, incluidos los 60
 casos de payload Darwin y los nuevos rechazos de destinos y rutas inseguros.
-La aplicación de ese parche y el arranque gráfico de Tahoe requieren su propio
-resultado; esta preparación no certifica que Tahoe ya funcione.
+El parche offline se aplicó a las 21:07 y una lectura independiente confirmó
+los archivos finales, la caché auxiliar y el nuevo snapshot seleccionado para
+arranque, conservando el snapshot sellado original. Sequoia siguió pasando la
+prueba Metal después de esa operación. El arranque gráfico de Tahoe todavía
+requiere su propia prueba; el resultado de aplicación no certifica que Tahoe
+ya funcione.

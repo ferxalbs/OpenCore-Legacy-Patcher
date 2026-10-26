@@ -95,3 +95,20 @@ files and overwritten subtrees. All 196 final System files matched the ordered
 payload after that correction. A retry is accepted only after a failure receipt
 confirms rollback and all saved Data files still match their original backup;
 the original backup is reused, not replaced with partially patched files.
+
+## Application result, October 25, 2026
+
+The corrected recovery was applied from Sequoia at 21:07 (America/Lima).
+The final payload and AuxKC were independently read back and verified. APFS
+reported a new Tahoe snapshot selected with `RootTo`, while retaining the
+original sealed snapshot. The metadata contains Kepler, Metal 3802, Tahoe
+graphics and both ordered OpenCL groups. The operation did not edit EFI or
+request a new firmware default. The protected Sequoia hashes were unchanged,
+and its GT 730 still completed the Metal blit with verified data afterward.
+
+The complete validation suite passed again after the ordered-merge correction,
+including 60 Darwin payload cases. This records successful offline application,
+not successful Tahoe boot. The next test is a **normal** Tahoe-Pruebas boot
+through the same USB OpenCore, without Shift. Native root patching should not
+be repeated on top of this experimental installation. Initial setup, Metal,
+networking and audio remain unverified until checked in Tahoe.
