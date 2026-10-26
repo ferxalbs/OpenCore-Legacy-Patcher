@@ -5,10 +5,11 @@ GK208B (`10de:1287`), Wi-Fi Intel (`8086:43f0`) y SMBIOS iMac20,1. No es una
 certificación de compatibilidad con Hackintosh ni una actualización del Sequoia
 de trabajo. Windows y Sequoia se conservan.
 
-Estado de esta preparación: volumen vacío creado, EFI Intel corregida instalada
-y verificada, paquetes descargados y comprobados. El arranque con la nueva EFI
-y la instalación de Tahoe siguen pendientes. Sequoia conserva OCLP 2.5.1 y sus
-root patches anteriores.
+Estado actual: EFI Intel corregida instalada, comprobaciones iniciales de
+Sequoia tras reiniciar aprobadas y preparación de la instalación de Tahoe
+iniciada. El propietario confirmó la selección de `Tahoe-Pruebas`. El primer
+arranque de Tahoe y sus root patches siguen pendientes. Sequoia conserva
+OCLP 2.5.1 y sus root patches anteriores.
 
 ## Sistema elegido y recursos
 
@@ -160,3 +161,15 @@ Los USB de recuperación de Sequoia y Windows se mantienen.
 * [AppleALC: limitación de AppleHDA en Tahoe](https://github.com/acidanthera/AppleALC)
 * [Guía Tahoe de Dortania](https://github.com/dortania/OpenCore-Install-Guide/blob/master/extras/tahoe.md)
 * [AppleDB: metadatos de instaladores usados por OCLP](https://api.appledb.dev/ios/macOS/main.json)
+
+## Primer arranque con la candidata Intel
+
+El 25 de octubre a las 19:32 (America/Lima), Sequoia 24G720 pasó las
+comprobaciones iniciales: IOName `pci8086,43f0`, AirportItlwm y RestrictEvents
+cargados, `revblock=auto,media` efectivo, operación Metal con datos verificados
+y metadatos de root patch sin cambios. No se observaron informes GPU nuevos
+desde este arranque. Esto no certifica estabilidad prolongada ni la identidad
+exacta del binario OpenCore. El propietario confirmó después que `Tahoe-Pruebas`
+aparecía como destino seleccionable e inició la instalación. Los registros
+mostraron la descompresión de los componentes de actualización; el primer
+arranque y la comprobación del sistema de destino siguen pendientes.

@@ -1,6 +1,6 @@
 {
   "date": "2026-10-25",
-  "status": "prepared_pending_corrected_efi_sequoia_boot_test",
+  "status": "installation_preparing_first_tahoe_boot_pending",
   "target": {
     "version": "26.7.1",
     "build": "25G241",
@@ -19,12 +19,13 @@
     "apple_package_signature_valid": true,
     "manual_app_extraction_gatekeeper_accepted": false,
     "native_apple_package_installation": "completed; native installer exit code 0",
-    "os_installation_started": false,
+    "os_installation_started": true,
     "internal_asset_version_build_verified": "26.7.1 / 25G241",
     "native_application_path": "/Applications/Install macOS Tahoe.app",
     "native_application_gui_opened": "Owner confirmed Tahoe welcome window with Continue button",
     "native_application_static_gatekeeper_assessment": "resource envelope custom omit rules rejected; native-installed GUI nevertheless opens; no security controls modified",
-    "documented_cli_volume_option_available": false
+    "documented_cli_volume_option_available": false,
+    "target_selection": "Owner confirmed Tahoe-Pruebas selectable and then confirmed installation preparing"
   },
   "checks": {
     "repository_validation_exit_code": 0,
@@ -38,7 +39,11 @@
     "original_efi_files_unchanged_except_config": 124,
     "corrected_candidate_files_verified": 134,
     "existing_itlwm_matches_official_release": "2 of 2 files identical",
-    "new_efi_boot_test": "pending"
+    "new_efi_boot_test": "Initial Sequoia runtime checks passed on 2026-10-25 at 19:32 America/Lima; exact OpenCore binary identity remains masked",
+    "wifi_IOName_after_boot": "pci8086,43f0",
+    "metal_verified_after_boot": true,
+    "revblock_media_effective_after_boot": true,
+    "sequoia_root_patch_metadata_unchanged_after_boot": true
   },
   "prepared": {
     "empty_apfs_volume": "Tahoe-Pruebas",
@@ -53,8 +58,7 @@
     "sequoia_root_patches_changed": false
   },
   "pending": [
-    "Use graphical installer to select only Tahoe-Pruebas after the corrected EFI Sequoia boot test",
-    "Reboot Sequoia through the corrected USB and verify graphics and wireless",
+    "Complete installer reboots through the audited USB and verify the first Tahoe boot before root patching",
     "Install Tahoe only on the new volume, then validate runtime patch selection",
     "Resolve audio patch selection for the Hackintosh with a T2-model SMBIOS",
     "Check USB, sleep, applications and GPU stability during real use"
