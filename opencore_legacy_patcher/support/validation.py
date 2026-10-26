@@ -31,6 +31,7 @@ from ..sys_patch.patchsets import (
 from ..sys_patch.patchsets.hardware.graphics import nvidia_kepler
 from ..detections import device_probe
 from .offline_tahoe_validation import validate_offline_tahoe_recovery
+from .tahoe_native_validation import validate_tahoe_native_candidate
 
 
 class PatcherValidation:
@@ -82,6 +83,7 @@ class PatcherValidation:
         self._validate_gt730_stability_config()
         self._validate_gt730_kepler_patchsets()
         validate_offline_tahoe_recovery()
+        validate_tahoe_native_candidate()
         self._validate_sys_patch()
 
 
