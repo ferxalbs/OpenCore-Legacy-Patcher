@@ -86,6 +86,14 @@ read-only. Application failure attempts restoration of the prior config and
 removal of newly copied payloads. `--restore` restores the prior config after a
 runtime failure; added EFI bundles then remain unreferenced for diagnosis.
 
+The working Sequoia installation has an elided AppleHDA executable: its kext
+metadata remains on disk while the driver loads from a kernel collection. The
+transaction therefore requires and hashes AppleHDA's Info.plist and Sequoia's
+SystemKC, and separately records whether a loose executable exists. Absence is
+tracked, not silently ignored; appearance or content changes alter the protected
+fingerprint. The first activation attempt stopped at the older, incorrect
+loose-executable assumption before any backup or installation writes.
+
 ## Validation and runtime status
 
 The custom suite exercises Sequoia isolation, driver conflicts, dependency

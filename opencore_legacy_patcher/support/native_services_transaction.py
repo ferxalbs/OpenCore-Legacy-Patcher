@@ -21,6 +21,11 @@ def sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def optional_executable_fingerprint(path: Path):
+    """Track presence as well as content for binaries elided into Apple's KCs."""
+    return sha(path) if path.exists() else None
+
+
 def file_tree(root: Path) -> dict:
     return {str(path.relative_to(root)): sha(path) for path in root.rglob("*")
             if path.is_file() and not path.is_symlink() and path.name != ".DS_Store" and not path.name.startswith("._")}
@@ -83,12 +88,16 @@ class NativeServicesTransaction:
         paths = [Path("/Library/Extensions/GeForce.kext/Contents/MacOS/GeForce"),
                  Path("/Library/KernelCollections/AuxiliaryKernelExtensions.kc"),
                  Path("/System/Library/CoreServices/OpenCore-Legacy-Patcher.plist"),
-                 Path("/System/Library/Extensions/AppleHDA.kext/Contents/MacOS/AppleHDA"),
+                 Path("/System/Library/Extensions/AppleHDA.kext/Contents/Info.plist"),
+                 Path("/System/Library/KernelCollections/SystemKernelExtensions.kc"),
                  system / "System/Library/CoreServices/OpenCore-Legacy-Patcher.plist",
                  system / "System/Library/KernelCollections/BootKernelExtensions.kc",
                  system / "System/Library/KernelCollections/SystemKernelExtensions.kc",
                  data / "Library/KernelCollections/AuxiliaryKernelExtensions.kc"]
-        return {str(path): sha(path) for path in paths}
+        result = {str(path): sha(path) for path in paths}
+        executable = Path("/System/Library/Extensions/AppleHDA.kext/Contents/MacOS/AppleHDA")
+        result[str(executable)] = optional_executable_fingerprint(executable)
+        return result
 
     def candidate(self, old: bytes) -> bytes:
         new = (self.base / "config-native-tahoe.plist").read_bytes()

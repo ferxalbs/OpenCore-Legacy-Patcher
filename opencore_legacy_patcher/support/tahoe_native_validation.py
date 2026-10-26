@@ -6,7 +6,7 @@ import plistlib
 import tempfile
 
 from ..efi_builder.tahoe_native import build_tahoe_native_config, validate_native_config, active_kexts
-from .native_services_transaction import NativeServicesTransaction, file_tree, verify_tree
+from .native_services_transaction import NativeServicesTransaction, file_tree, verify_tree, optional_executable_fingerprint
 
 
 def validate_tahoe_native_candidate() -> None:
@@ -60,6 +60,13 @@ def validate_tahoe_native_candidate() -> None:
     must_reject(validate_native_config, original, bad)
     with tempfile.TemporaryDirectory() as directory:
         root = Path(directory)
+        elided = root / "AppleHDA"
+        assert optional_executable_fingerprint(elided) is None
+        elided.write_bytes(b"present executable")
+        present = optional_executable_fingerprint(elided)
+        assert present is not None
+        elided.write_bytes(b"changed executable")
+        assert optional_executable_fingerprint(elided) != present
         (root / "OC").mkdir()
         config_path = root / "OC/config.plist"
         old, new = plistlib.dumps({"old": True}), plistlib.dumps({"new": True})
