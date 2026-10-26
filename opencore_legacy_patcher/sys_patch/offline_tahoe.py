@@ -95,6 +95,24 @@ def validate_cache_metadata(text: str, boot_uuid: str, system_uuid: str) -> None
         raise ValueError("AuxKC is missing a required NVIDIA extension")
 
 
+def effective_payload_files(base: Path, operations: list[dict]) -> dict:
+    """Resolve ordered merges before verification; later source files win."""
+    expected = {}
+    for op in operations:
+        relative = relative_path(op["relative"])
+        source = contained_path(base, op["source"])
+        if op["method"] == "overwrite":
+            expected = {key: value for key, value in expected.items()
+                        if key[0] != op["volume"] or not key[1].is_relative_to(relative)}
+        files = [source] if source.is_file() else [
+            path for path in source.rglob("*") if path.is_file() and not path.is_symlink()
+        ]
+        for path in files:
+            destination = relative if source.is_file() else relative / path.relative_to(source)
+            expected[(op["volume"], destination)] = path
+    return expected
+
+
 class OfflineTahoeRecovery:
     def __init__(self, manifest_path: Path):
         self.manifest_path = manifest_path.resolve()
@@ -203,7 +221,28 @@ class OfflineTahoeRecovery:
 
     def prepare_backup(self) -> dict:
         if self.backup.exists():
-            raise ValueError("A prior offline attempt exists; review its receipt before repeating")
+            previous = json.loads((self.base / "offline-apply-result.json").read_text())
+            if previous.get("status") != "failed" or previous.get("rollback") != "original_data_restored_and_sealed_snapshot_selected":
+                raise ValueError("Previous attempt did not confirm rollback; refusing to retry")
+            state = json.loads((self.backup / "state.json").read_text())
+            if state["original_snapshot_uuid"] != self.manifest["original_snapshot_uuid"]:
+                raise ValueError("Original backup belongs to a different snapshot")
+            for item in state["data_files"]:
+                current = contained_path(self.data, item["relative"])
+                saved = self.backup / "data" / item["relative"]
+                if not item["existed"]:
+                    if current.exists() or current.is_symlink():
+                        raise ValueError("Data changed since rollback; do not overwrite it")
+                elif saved.is_file():
+                    if sha256(current) != sha256(saved):
+                        raise ValueError("Restored Data file differs from the original backup")
+                else:
+                    raise ValueError("Directory backup needs manual review before retry")
+            # Retain the first failure receipt and the original backup unchanged.
+            failure = self.base / "offline-first-failure.json"
+            if not failure.exists():
+                failure.write_text(json.dumps(previous, indent=2))
+            return state
         self.backup.mkdir(mode=0o700)
         state = {"data_files": [], "original_snapshot_uuid": self.manifest["original_snapshot_uuid"]}
         items = [f"Library/Extensions/{name}" for name in sorted(KEXT_NAMES)]
@@ -341,16 +380,12 @@ class OfflineTahoeRecovery:
                 self.run(["/usr/sbin/diskutil", "mount", "readOnly", self.device])
 
     def verify_installed(self) -> None:
-        for op in self.manifest["operations"]:
-            source = contained_path(self.base, op["source"])
-            root = self.system if op["volume"] == "system" else self.data
-            dest = contained_path(root, op["relative"])
-            pairs = [(source, dest)] if source.is_file() else [
-                (p, dest / p.relative_to(source)) for p in source.rglob("*") if p.is_file() and not p.is_symlink()
-            ]
-            for original, installed in pairs:
-                if not installed.resolve().is_relative_to(root.resolve()) or sha256(original) != sha256(installed):
-                    raise ValueError(f"Installed payload differs: {installed}")
+        expected = effective_payload_files(self.base, self.manifest["operations"])
+        for (volume, relative), original in expected.items():
+            root = self.system if volume == "system" else self.data
+            installed = contained_path(root, str(relative))
+            if sha256(original) != sha256(installed):
+                raise ValueError(f"Installed payload differs: {installed}")
         if sha256(self.data / "Library/KernelCollections/AuxiliaryKernelExtensions.kc") != self.manifest["aux_sha256"]:
             raise ValueError("Installed AuxKC differs from the tested artifact")
 

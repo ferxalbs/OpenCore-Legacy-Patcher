@@ -5,7 +5,7 @@ from pathlib import Path
 import tempfile
 
 from ..sys_patch.offline_tahoe import (
-    KEXT_NAMES, contained_path, relative_path, validate_cache_metadata,
+    KEXT_NAMES, contained_path, effective_payload_files, relative_path, validate_cache_metadata,
     validate_identities, validate_manifest,
 )
 
@@ -56,6 +56,19 @@ def validate_offline_tahoe_recovery() -> None:
         (root / "escape").symlink_to(root.parent, target_is_directory=True)
         must_reject(contained_path, root, "escape/another-volume")
         assert contained_path(root, "System/Library/Metal") == root / "System/Library/Metal"
+        first, second = root / "first", root / "second"
+        first.mkdir()
+        second.mkdir()
+        (first / "shared.dylib").write_bytes(b"intermediate OpenCL")
+        (first / "retained.dylib").write_bytes(b"retained")
+        (second / "shared.dylib").write_bytes(b"final OpenCL")
+        operations = [{"volume": "system", "method": "merge", "relative": "System/OpenCL",
+                       "source": name} for name in ("first", "second")]
+        expected = effective_payload_files(root, operations)
+        assert expected[("system", Path("System/OpenCL/shared.dylib"))] == second / "shared.dylib"
+        assert expected[("system", Path("System/OpenCL/retained.dylib"))] == first / "retained.dylib"
+        operations[1]["method"] = "overwrite"
+        assert ("system", Path("System/OpenCL/retained.dylib")) not in effective_payload_files(root, operations)
 
     identifiers = ["com.apple.GeForce", "com.apple.nvidia.driver.NVDAGK100Hal",
                    "com.apple.nvidia.driver.NVDAResman", "com.apple.nvidia.NVDAStartup",

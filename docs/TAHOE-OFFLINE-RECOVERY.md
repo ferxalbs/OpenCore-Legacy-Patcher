@@ -81,3 +81,17 @@ and cache links to a different OS. These checks do not mount or modify a system.
 The regular `--validate` suite also checks supported-model OpenCore generation
 and root-patch payload availability. Applying the recovery and booting Tahoe
 remain manual hardware checks until recorded otherwise.
+
+The first application stopped before snapshot creation because the original
+verifier compared the intermediate Monterey OpenCL files against the final
+Big Sur OpenCL merge. The installed library matched the latter exactly. The
+Data backup was restored and the original sealed snapshot was selected. The
+unsealed base volume retains the file changes; selecting the sealed snapshot
+is the boot rollback, not a claim that every base-volume byte was restored.
+
+Verification now computes the final file map in patchset order, including
+overwrite semantics. Regression checks cover overlapping files, retained merge
+files and overwritten subtrees. All 196 final System files matched the ordered
+payload after that correction. A retry is accepted only after a failure receipt
+confirms rollback and all saved Data files still match their original backup;
+the original backup is reused, not replaced with partially patched files.
