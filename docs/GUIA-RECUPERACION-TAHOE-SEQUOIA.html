@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guía de recuperación — Tahoe y Sequoia · Fer</title>
+<style>
+:root{color-scheme:light;--ink:#182b3c;--muted:#526473;--line:#d9e2e9;--blue:#155da5;--paper:#fff}
+*{box-sizing:border-box}body{margin:0;background:#eef3f6;color:var(--ink);font:17px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:960px;margin:32px auto;padding:44px;background:var(--paper);border:1px solid var(--line);border-radius:16px}
+h1{font-size:36px;line-height:1.2;letter-spacing:-1px}h2{font-size:25px;margin-top:40px;border-top:1px solid var(--line);padding-top:24px}h3{font-size:20px}
+p,li{max-width:78ch}li{margin:9px 0}a{color:var(--blue)}code,pre{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:14px}
+code{background:#eef3f7;padding:2px 5px;border-radius:4px;overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#edf3f8;padding:16px;border-radius:8px}
+.eyebrow{font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}.box{padding:18px 22px;background:#edf7f0;border-left:5px solid #287b45;border-radius:6px;margin:24px 0}
+.care{background:#fff5df;border-color:#bd8512}.muted{color:var(--muted)}table{border-collapse:collapse;width:100%;font-size:15px}th,td{border:1px solid var(--line);padding:12px;text-align:left;vertical-align:top}th{background:#edf3f7}
+nav{padding:18px;background:#f2f6f9;border-radius:8px}nav a{display:inline-block;margin:4px 16px 4px 0}footer{margin-top:40px;font-size:14px;color:var(--muted)}
+@media(max-width:640px){main{margin:0;padding:22px;border-radius:0}h1{font-size:29px}table{font-size:13px}td,th{padding:8px}}
+@media print{body{background:white;font-size:11pt}main{border:0;margin:0;padding:0;max-width:none}nav{display:none}h2{break-after:avoid}table,.box{break-inside:avoid}a{color:inherit}}
+</style>
+</head>
+<body><main>
+<p class="eyebrow">Edición 1.0 · 26 de octubre de 2026 · Copia para consultar sin Internet</p>
+<h1>Si Tahoe falla, recupera primero el acceso a Sequoia</h1>
+<p>Guía específica para el equipo ASUS de Fer y su configuración probada. El objetivo es recuperar el arranque y conservar los archivos antes de considerar una reinstalación.</p>
+<div class="box"><strong>Ruta rápida:</strong> conectar el USB de 31 GB → menú de arranque ASUS → USB UEFI → OpenCore → <strong>macOS</strong> → Enter normal. Esa entrada corresponde al Sequoia existente. <strong>No necesitas reinstalarlo si todavía arranca.</strong></div>
+<nav><a href="#medios">Identificar los USB</a><a href="#volver">Volver a Sequoia</a><a href="#red">Wi-Fi o audio</a><a href="#efi">Recuperar la EFI</a><a href="#reinstalar">Reinstalar Sequoia</a><a href="#archivo">Contenido del respaldo</a><a href="#evitar">Errores que evitar</a></nav>
+
+<h2 id="medios">1. Identifica los medios antes de actuar</h2>
+<table><thead><tr><th>Medio o entrada</th><th>Función</th><th>Qué conservar</th></tr></thead><tbody>
+<tr><td><strong>USB de 31 GB</strong><br>Volumen «Install macOS Sequoia»</td><td>Arranque OpenCore e instalador de Sequoia. Su partición de instalación ocupa unos 18,7 GB; existe además espacio sin asignar.</td><td>Su EFI, instalador y particiones. No formatearlo para copiar esta carpeta.</td></tr>
+<tr><td><strong>USB MATE de 15,7 GB</strong></td><td>Archivo de recuperación y documentación. Se retiró su material de instalación/reparación de Windows.</td><td>La carpeta <code>Rescate-macOS-Fer-2026-10-26</code> y tus documentos personales.</td></tr>
+<tr><td><strong>macOS</strong><br>Entrada en OpenCore</td><td>Sequoia 15.7.7 / 24G720 ya instalado.</td><td>Su grupo de volúmenes System/Data.</td></tr>
+<tr><td><strong>Tahoe-Pruebas</strong></td><td>Tahoe 26.7.1 / 25G241 con parches gráficos y servicios nativos.</td><td>Sus archivos y su grupo System/Data antes de borrar o reinstalar.</td></tr>
+<tr><td><strong>Windows Boot Manager</strong></td><td>Windows interno. Su EFI está en el disco interno.</td><td>Windows, su partición y su EFI. No copiar allí la EFI de macOS.</td></tr>
+</tbody></table>
+<p class="muted">Los números <code>disk0</code>, <code>disk2</code> o las letras de Windows pueden cambiar. Los tamaños, nombres y UUID del inventario privado sirven para comprobar el destino. MATE contiene archivos de rescate; esta carpeta por sí sola no es un instalador arrancable de macOS.</p>
+
+<h2 id="volver">2. Tahoe no abre: vuelve al Sequoia existente</h2>
+<ol>
+<li>Conserva conectado el USB de 31 GB. Si el equipo responde, reinicia normalmente. Si está completamente bloqueado, fotografía el error antes de forzar el apagado; no interrumpas una instalación que aún progresa.</li>
+<li>Abre el menú de arranque ASUS. En muchas placas se accede con <strong>F8</strong>; dentro de la interfaz UEFI también puede aparecer «Boot Menu» o «Boot Override». Selecciona el USB de 31 GB en modo UEFI, como en los arranques que ya funcionaron.</li>
+<li>Cuando aparezca OpenCore, elige <strong>macOS</strong> con Enter normal. No elijas «Tahoe-Pruebas», «macOS Installer» ni «Install macOS Sequoia» para esta vuelta al sistema existente.</li>
+<li>Si una entrada está oculta, pulsa espacio para mostrar las auxiliares. No elijas «Reset NVRAM» como prueba general.</li>
+<li>Desde Sequoia, copia primero los documentos recientes de <code>Tahoe-Pruebas - Data/Users/fer</code> a una ubicación externa. No fuerces permisos ni desbloqueos si el volumen está cifrado o no se deja leer.</li>
+<li>Conserva la versión y el texto del fallo. Un error de audio no requiere borrar Tahoe; un fallo de arranque tampoco demuestra que los datos estén dañados.</li>
+</ol>
+<p><strong>Control conocido en Sequoia:</strong> la GT 730 debe cargar <code>com.apple.GeForce</code> y completar la prueba Metal. En este proyecto se reparó una pérdida de aceleración restaurando el <code>GeForce.kext</code> que faltaba. No repitas esa reparación si el archivo y la aceleración siguen bien.</p>
+
+<h2 id="red">3. Solo falla el Wi-Fi o el audio de Tahoe</h2>
+<p>La configuración nativa está limitada a Darwin 25. Sequoia conserva sus controladores anteriores. El perfil de referencia usa AirportItlwm Tahoe 2.4.0 alpha, AppleALC 1.9.8 y SimpleHDA 1.0.0. El layout inyectado correcto para este equipo es <strong>13</strong>.</p>
+<ol>
+<li>Si Tahoe abre, ejecuta el diagnóstico de <code>03-Instaladores-y-Utilidades/Tahoe-Pruebas/Comprobar-WiFi-Audio-Nativo.command</code>. Es de lectura y muestra controladores, interfaces, estado de SimpleHDA y dispositivos de audio.</li>
+<li>No vuelvas a cargar simultáneamente <code>itlwm</code> y <code>AirportItlwm</code>. Si HeliPort se abre con el perfil nativo, ciérralo.</li>
+<li>Si necesitas deshacer los servicios nativos, vuelve a Sequoia. En la instalación original existe el comando <code>Revertir-WiFi-Audio-Nativo-Tahoe.command</code> dentro del directorio privado de auditoría de Tahoe. Solo funciona mientras conserve sus rutas y respaldos originales.</li>
+<li>Si las rutas originales ya no existen, el kit incluye <code>07-Recuperacion-Portable/Restaurar-Config-Anterior.command</code>. Restaura únicamente el config previo a los servicios nativos en el USB de arranque identificado. Deja intactos los parches gráficos de Tahoe. El Wi-Fi de Tahoe vuelve al perfil itlwm/HeliPort y el audio nativo deja de estar habilitado.</li>
+</ol>
+<div class="box care"><strong>No reviertas los parches gráficos para arreglar solo el sonido o la red.</strong> El snapshot sellado original de Tahoe no tiene aceleración Kepler y fue el estado que mostró pantalla negra con cursor. Volver a él no garantiza una interfaz utilizable.</div>
+
+<h2 id="efi">4. Se dañó la EFI del USB o no aparece OpenCore</h2>
+<p>El respaldo <code>01-EFI-Actual/EFI</code> contiene la EFI que funcionó con ambos sistemas. No contiene una imagen completa del disco interno.</p>
+<h3>Si todavía puedes entrar en Sequoia</h3>
+<ol>
+<li>Conecta MATE y el USB de 31 GB.</li>
+<li>Abre <code>07-Recuperacion-Portable/Restaurar-EFI-Probada.command</code>. Comprueba sus mensajes antes de introducir la contraseña local.</li>
+<li>El comando verifica el respaldo, identifica el USB por UUID y tamaño, conserva una copia de su EFI previa en MATE y copia el perfil probado. No selecciona una EFI interna por número de disco.</li>
+<li>Si se detiene por UUID distinto, falta de espacio o copia no válida, conserva el error. No quites las comprobaciones para forzar otro destino.</li>
+<li>Reinicia por el mismo USB y prueba primero <strong>macOS</strong>. Después prueba Tahoe con Enter normal.</li>
+</ol>
+<h3>Si ningún macOS arranca</h3>
+<p>Intenta entrar al <strong>Windows Boot Manager interno desde el menú ASUS</strong>, sin pasar por el OpenCore dañado. Windows puede leer los archivos FAT32 de MATE. Otra posibilidad es usar otro Mac o un medio OpenCore independiente que ya sepas que arranca.</p>
+<ol>
+<li>Localiza la carpeta del kit en MATE y comprueba que conserva <code>01-EFI-Actual/EFI/BOOT/BOOTx64.efi</code> y <code>01-EFI-Actual/EFI/OC/OpenCore.efi</code>.</li>
+<li>Si vas a montar una partición desde Windows, identifica primero el <strong>dispositivo USB de 31 GB y su partición FAT32 de unos 209 MB</strong>. No uses <code>mountvol /S</code> como atajo: puede seleccionar la EFI interna de Windows.</li>
+<li>Si sabes usar DiskPart, limita la operación a <code>list disk</code>, seleccionar el USB confirmado con <code>select disk N</code>, revisar <code>detail disk</code>, <code>list partition</code> y <code>detail partition</code>, y asignar una letra libre a su EFI. <strong>No ejecutar clean, format, convert, delete, set id ni active.</strong> Si Windows no permite asignarla, detente y usa otro entorno; no cambies el tipo de partición.</li>
+<li>Respalda primero la carpeta EFI que tenga ese USB. Copia después la carpeta <code>EFI</code> del kit a la raíz de esa partición, conservando la estructura <code>EFI/BOOT</code> y <code>EFI/OC</code>. No copies la carpeta a una EFI del disco interno ni anides una segunda EFI dentro de la primera.</li>
+<li>Expulsa los USB de forma segura y prueba el de 31 GB desde el menú ASUS. La restauración desde Windows y una sustitución física del USB no se han ensayado en este proyecto; requieren comprobar el destino cuidadosamente.</li>
+</ol>
+<p>Si el USB está físicamente averiado, copiar archivos no lo repara. Un USB nuevo tendrá otros UUID: deberá prepararse e identificarse expresamente. El restaurador portátil se negará a escribir en un dispositivo nuevo por su cuenta.</p>
+
+<h2 id="reinstalar">5. Último recurso: reinstalar Sequoia</h2>
+<div class="box care"><strong>Primero decide qué conservar.</strong> Volver al Sequoia existente no borra Tahoe. Reinstalar Sequoia sobre su propio volumen puede conservar datos; sustituir Tahoe por un sistema anterior mediante instalación limpia elimina el grupo de volúmenes que selecciones. Esta guía no autoriza a borrar el disco completo.</div>
+<h3>A. Reparar el Sequoia existente sin borrar su volumen</h3>
+<ol>
+<li>Respalda los documentos de ambos sistemas fuera del disco interno. La copia de EFI y los registros de este kit no reemplazan ese respaldo.</li>
+<li>Arranca por el USB de 31 GB → OpenCore → <strong>Install macOS Sequoia</strong>. El instalador ya estaba en ese USB; no se recreó ni se ensayó una reinstalación durante la preparación del kit.</li>
+<li>Revisa en el instalador qué versión ofrece. <strong>No presupongas que el USB instala exactamente 15.7.7/24G720.</strong> Si ofrece otra compilación, los recursos de parches deben corresponder a esa compilación.</li>
+<li>Selecciona <strong>macOS</strong>, el volumen de sistema de Sequoia. No elijas su volumen <code>- Data</code>, Tahoe ni Windows. No borres el volumen para una reinstalación de reparación.</li>
+<li>Conserva el USB conectado durante los reinicios. Elige «macOS Installer» si aparece para continuar la instalación y, al finalizar, «macOS».</li>
+<li>La reinstalación puede retirar parches de la GPU. El paquete <code>OpenCore-Patcher-2.5.1-Sequoia.pkg</code> está incluido como referencia de la versión usada en Sequoia. Instálalo únicamente dentro de Sequoia; no reconstruyas ni instales OpenCore en la EFI interna.</li>
+<li>Revisa «Post-Install Root Patch» antes de aplicar: debe detectar la GPU Kepler y disponer de los recursos de la compilación recién instalada. En un Hackintosh con Intel, la detección automática de Wi-Fi puede requerir evaluación aparte; no falsifiques la tarjeta como Broadcom para forzar parches.</li>
+<li>El kit conserva los recursos Metallib de <strong>15.7.7/24G720</strong>. No deben usarse sobre otra compilación. La recuperación de gráficos/red después de una reinstalación limpia no se ha ensayado y no es una restauración automática de este kit.</li>
+</ol>
+<h3>B. Sustituir Tahoe por Sequoia mediante instalación limpia</h3>
+<ol>
+<li>Usa esta vía solo si decides retirar Tahoe y ya tienes otra copia de sus archivos. No es una actualización hacia atrás que conserve automáticamente sus programas.</li>
+<li>Arranca el instalador de Sequoia por OpenCore. Abre Utilidad de Discos y activa «Mostrar todos los dispositivos».</li>
+<li>Identifica <strong>solo el grupo Tahoe-Pruebas / Tahoe-Pruebas - Data</strong> usando los nombres y UUID del inventario privado. El disco interno de 500 GB contiene también Windows y el Sequoia de recuperación.</li>
+<li>Si decides hacer una instalación limpia, el borrado debe limitarse a ese grupo de Tahoe. <strong>No seleccionar el disco físico, el contenedor APFS, la EFI, Windows ni el grupo macOS de Sequoia.</strong> Si no puedes distinguirlos, detente antes de borrar.</li>
+<li>Instala Sequoia en el destino limpio elegido, con un nombre inequívoco como «Sequoia-Rescate». Revisa sus parches con el mismo cuidado descrito arriba.</li>
+<li>Después de recrear volúmenes cambian sus UUID. Los comandos offline archivados para el antiguo Tahoe deben negarse a actuar: <strong>no edites sus UUID a ciegas para reutilizarlos.</strong></li>
+</ol>
+<p>El instalador de Sequoia y el perfil probado son específicos de este hardware. Una GPU diferente, una placa nueva o una actualización mayor necesitan su propia revisión.</p>
+
+<h2 id="archivo">6. Qué contiene esta carpeta</h2>
+<table><thead><tr><th>Carpeta</th><th>Contenido</th></tr></thead><tbody>
+<tr><td><code>01-EFI-Actual</code></td><td>EFI probada, config previo a Wi-Fi/audio nativos y hashes de los archivos. Contiene identificadores privados: no publicarla completa.</td></tr>
+<tr><td><code>02-Codigo</code></td><td>Historial Git en un bundle verificable y una instantánea del código y documentación. La única rama de trabajo es main.</td></tr>
+<tr><td><code>03-Instaladores-y-Utilidades</code></td><td>OCLP para Sequoia, utilidades de Tahoe, HeliPort y diagnósticos. No hace falta volver a instalar todos los paquetes para usar los sistemas que ya funcionan.</td></tr>
+<tr><td><code>04-Registros-y-Respaldos</code></td><td>Auditorías OCLP y Windows, respaldos privados, scripts, recursos y resultados. El archivo está dividido en partes por el límite de FAT32.</td></tr>
+<tr><td><code>05-Historial-Windows</code></td><td>Scripts y diagnósticos de la reparación anterior. El material de instalación de Windows se retiró del USB después de verificar su copia temporal. El kit conserva el historial y los hashes; no guarda la ISO completa de Windows.</td></tr>
+<tr><td><code>06-Historico-Material-Anterior</code></td><td>Material macOS anterior que ya había en MATE. Es histórico; su presencia no significa que deba instalarse sobre el perfil actual.</td></tr>
+<tr><td><code>07-Recuperacion-Portable</code></td><td>Restauradores de EFI/config, utilidades de comprobación y registros de organización. No ejecutarlos como mantenimiento rutinario.</td></tr>
+<tr><td><code>00-Estado</code></td><td>Inventario, versiones, procedencia y decisiones de inclusión/exclusión.</td></tr>
+</tbody></table>
+<h3>Leer los registros divididos</h3>
+<p>Debes conservar todas las partes <code>Registros-completos.tar.gz.part-*</code> en la misma carpeta. Desde macOS se pueden listar sin extraer:</p>
+<pre>cat Registros-completos.tar.gz.part-* | tar -tzf -</pre>
+<p>Para extraerlos, elige una carpeta vacía en un disco con suficiente espacio, entra en ella y usa la ruta completa de las partes:</p>
+<pre>cat "/ruta/04-Registros-y-Respaldos/"Registros-completos.tar.gz.part-* | tar -xzf -</pre>
+<p>No extraigas el histórico encima de <code>/</code> ni de los registros activos. Sus scripts conservan rutas de la instalación original; muchos no son portátiles. El instalador de Tahoe de más de 18 GB y las extracciones duplicadas están excluidos del archivo para MATE. Sus metadatos y hashes se conservan; la descarga original sigue en el disco interno. Este kit no contiene un instalador completo de Tahoe ni copias de todos tus documentos.</p>
+<h3>Recuperar el repositorio sin GitHub</h3>
+<pre>git clone Proyecto-OpenCore.bundle OpenCore-Legacy-Patcher
+cd OpenCore-Legacy-Patcher
+git switch main</pre>
+<p>El bundle contiene código e historial, no el intérprete Python ni todas las dependencias instaladas. Consulta <code>SOURCE.md</code> antes de recompilar. Las guías HTML y TXT se pueden leer sin Python, Git ni Internet.</p>
+
+<h2 id="evitar">7. Acciones que no deben convertirse en pruebas al azar</h2>
+<ul>
+<li>No borrar ni reemplazar la EFI interna de Windows para reparar macOS.</li>
+<li>No usar comandos <code>eraseDisk</code>, <code>clean</code>, ni borrar el contenedor APFS completo.</li>
+<li>No resetear NVRAM ni cambiar BIOS, SMBIOS, SIP o argumentos sin una causa concreta y un respaldo.</li>
+<li>No aplicar desde Sequoia el comando habitual <code>--patch_sys_vol</code> esperando que seleccione Tahoe: apunta al sistema arrancado.</li>
+<li>No reutilizar la caché offline de 25G241 sobre una actualización distinta.</li>
+<li>No instalar OCLP 3 RC3 ni repetir root patches en el Sequoia de recuperación solo por ser una versión más nueva.</li>
+<li>No desactivar XProtect por aparecer activo. Investigar consumo sostenido o alertas concretas por separado.</li>
+</ul>
+<div class="box"><strong>Punto de referencia probado:</strong> Tahoe 26.7.1/25G241, GT 730 GK208B de 2 GB, Intel AX201 y Realtek ALC897. El propietario informó Wi-Fi nativo funcional, unas dos horas de audio y ausencia de retrasos perceptibles. Es una prueba de uso satisfactoria, no una certificación de estabilidad indefinida ni de todas las funciones del hardware.</div>
+
+<h2>8. Fuentes y límites de esta edición</h2>
+<ul>
+<li><a href="https://github.com/ferxalbs/OpenCore-Legacy-Patcher">Fork de trabajo y documentación del proyecto</a>.</li>
+<li><a href="https://support.apple.com/en-us/102655">Apple: reinstalar macOS</a> — procedimiento general; este ASUS requiere arrancar primero mediante su OpenCore.</li>
+<li><a href="https://support.apple.com/en-us/101578">Apple: crear un instalador arrancable</a> — crear uno nuevo borra el destino elegido; esta organización no recreó el USB de 31 GB.</li>
+<li><a href="https://support.apple.com/en-us/118282">Apple: varios macOS en volúmenes APFS</a>.</li>
+<li><a href="https://www.asus.com/support/faq/1013017/">ASUS: selección de arranque USB/Boot Menu</a>.</li>
+<li><a href="https://github.com/laobamac/itlwm">AirportItlwm Tahoe</a> y <a href="https://github.com/laobamac/SimpleHDA">SimpleHDA</a>.</li>
+</ul>
+<footer>Guía preparada a partir de los cambios y resultados de este equipo. No se ejecutó una reinstalación ni una restauración de EFI para probar esta edición. Guarda una copia de esta guía y de los respaldos fuera del disco interno y, si es posible, en otro lugar además de MATE.</footer>
+</main></body></html>
