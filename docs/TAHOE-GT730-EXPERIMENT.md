@@ -62,9 +62,15 @@ Gatekeeper la rechazó por `resource envelope is obsolete (custom omit rules)`.
 La firma del código con requisito de anclaje Apple sí pasó al omitir únicamente
 la evaluación de recursos, pero ese resultado no equivale a aceptar la app en
 Gatekeeper. No se retiraron firmas ni se modificaron controles de seguridad.
-Se preparó la instalación estándar del paquete firmado de Apple; requiere
-autenticación local y solo añade la aplicación instaladora. Su resultado y los
-metadatos internos deben comprobarse antes de iniciar la instalación del sistema.
+La instalación estándar del paquete firmado de Apple terminó con código 0 y
+añadió `/Applications/Install macOS Tahoe.app`. Los metadatos internos del medio
+confirman 26.7.1 / 25G241. La evaluación estática de Gatekeeper sigue devolviendo
+el error de reglas de recursos, incluso para la app instalada por Apple, pero
+el propietario confirmó que la ventana de bienvenida abre. No se cambió ninguna
+protección para abrirla. La consulta `startosinstall --usage` terminó con código
+0; no ofrece una opción documentada de volumen de destino. La instalación
+separada debe seleccionar `Tahoe-Pruebas` en la interfaz gráfica, sin usar
+`--eraseinstall` ni asumir una opción `--volume` no documentada.
 
 Las EFI, manifiestos de hashes y comandos de recuperación con identificadores
 del dispositivo se conservan en la auditoría privada, fuera de GitHub. La

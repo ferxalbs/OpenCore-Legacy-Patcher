@@ -1,6 +1,6 @@
 {
   "date": "2026-10-25",
-  "status": "efi_staged_native_installassistant_application_pending",
+  "status": "prepared_pending_corrected_efi_sequoia_boot_test",
   "target": {
     "version": "26.7.1",
     "build": "25G241",
@@ -18,14 +18,22 @@
     "sha256": "ca854f49dfdedbe78492c26d0e4172ee4d37573e2d375ca90c083d7615b6f48a",
     "apple_package_signature_valid": true,
     "manual_app_extraction_gatekeeper_accepted": false,
-    "native_apple_package_installation": "pending user-local administrator authentication",
-    "os_installation_started": false
+    "native_apple_package_installation": "completed; native installer exit code 0",
+    "os_installation_started": false,
+    "internal_asset_version_build_verified": "26.7.1 / 25G241",
+    "native_application_path": "/Applications/Install macOS Tahoe.app",
+    "native_application_gui_opened": "Owner confirmed Tahoe welcome window with Continue button",
+    "native_application_static_gatekeeper_assessment": "resource envelope custom omit rules rejected; native-installed GUI nevertheless opens; no security controls modified",
+    "documented_cli_volume_option_available": false
   },
   "checks": {
     "repository_validation_exit_code": 0,
     "darwin_payload_cases": 60,
     "kepler_resource_paths_present": 25,
-    "patcher_support_versions_checked": ["2.0.2", "2.0.3"],
+    "patcher_support_versions_checked": [
+      "2.0.2",
+      "2.0.3"
+    ],
     "candidate_ocvalidate_exit_code": 0,
     "original_efi_files_unchanged_except_config": 124,
     "corrected_candidate_files_verified": 134,
@@ -45,7 +53,7 @@
     "sequoia_root_patches_changed": false
   },
   "pending": [
-    "Complete standard Apple InstallAssistant package installation and inspect internal build metadata",
+    "Use graphical installer to select only Tahoe-Pruebas after the corrected EFI Sequoia boot test",
     "Reboot Sequoia through the corrected USB and verify graphics and wireless",
     "Install Tahoe only on the new volume, then validate runtime patch selection",
     "Resolve audio patch selection for the Hackintosh with a T2-model SMBIOS",
