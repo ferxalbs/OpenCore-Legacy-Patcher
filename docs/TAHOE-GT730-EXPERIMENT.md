@@ -144,10 +144,13 @@ audio y reposo requieren comprobaciones reales. No se promete Mac2, nueva
 decodificación por hardware, más FPS ni la desaparición de los cierres de
 agentes de texto. El `revblock=auto,media` verificado en Sequoia se conserva.
 
-Nunca ejecutar `--prepare_for_update`, desinstalar parches o aplicar root
-patching desde Sequoia para preparar este experimento. Los parches de Tahoe se
-aplican después de arrancar Tahoe y confirmar su versión y volumen de origen.
-Los USB de recuperación de Sequoia y Windows se mantienen.
+Nunca ejecutar `--prepare_for_update`, desinstalar parches o ejecutar el
+parcheador habitual `--patch_sys_vol` desde Sequoia para preparar Tahoe: ese
+comando selecciona el sistema arrancado. El procedimiento habitual requiere
+arrancar Tahoe y confirmar su versión y volumen de origen. La recuperación
+offline experimental, aislada del parcheador habitual, se documenta en
+[TAHOE-OFFLINE-RECOVERY.md](TAHOE-OFFLINE-RECOVERY.md). Los USB de recuperación
+de Sequoia y Windows se mantienen.
 
 ## Fuentes primarias y metadatos
 
@@ -172,4 +175,26 @@ desde este arranque. Esto no certifica estabilidad prolongada ni la identidad
 exacta del binario OpenCore. El propietario confirmó después que `Tahoe-Pruebas`
 aparecía como destino seleccionable e inició la instalación. Los registros
 mostraron la descompresión de los componentes de actualización; el primer
-arranque y la comprobación del sistema de destino siguen pendientes.
+arranque y la comprobación del sistema de destino estaban pendientes en ese momento.
+
+## Recuperación tras el primer intento de Tahoe
+
+Tahoe 26.7.1/25G241 quedó instalado en su grupo APFS separado, pero el primer
+acceso mostró una pantalla negra con cursor. Los registros alcanzan Language
+Chooser y todavía no hay una cuenta local. Un intento de entrada en modo
+seguro tampoco proporcionó una interfaz utilizable; no se certificó que ese
+arranque hubiera activado efectivamente el modo seguro.
+
+Sequoia perdió aceleración porque faltaba `/Library/Extensions/GeForce.kext`.
+Se restauró desde el payload de OCLP 2.5.1 ya instalado. Tras el reinicio se
+confirmaron el controlador cargado y una operación Metal con datos verificados.
+El monitor RSR instalado puede retirar ese archivo, pero no se ha demostrado
+qué proceso lo eliminó en este caso.
+
+Por solicitud del propietario se preparó una recuperación offline independiente.
+La construcción aislada de la caché auxiliar de Tahoe fue exitosa, con enlaces
+verificados a sus BootKC y SystemKC y sin cambios en las cachés instaladas.
+La validación completa del repositorio terminó con código 0, incluidos los 60
+casos de payload Darwin y los nuevos rechazos de destinos y rutas inseguros.
+La aplicación de ese parche y el arranque gráfico de Tahoe requieren su propio
+resultado; esta preparación no certifica que Tahoe ya funcione.
